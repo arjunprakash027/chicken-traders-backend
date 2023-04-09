@@ -4,7 +4,8 @@ import (
 	"fmt";
 	"encoding/json";
 	"net/http";
-	"net/url"
+	"net/url";
+	"io/ioutil"
 )
 
 func getall() interface{}{
@@ -32,20 +33,23 @@ func adddata(){
 	params_add.Add("transtype","purchase")
 	params_add.Add("remark","a very good chicken from america, but there are only bones,where is the meat??")
 
-	resp,err := http.PostForm(url_add,params_add)
-	if err!=nil{
+	resp, err := http.Get(url_add + "?" + params_add.Encode())
+	fmt.Println(url_add + "?" + params_add.Encode())
+	if err != nil {
 		panic(err)
 	}
 	defer resp.Body.Close()
 
-	var data interface{}
-	err = json.NewDecoder(resp.Body).Decode(&data)
-	if err!= nil{
+	bodyBytes, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
 		panic(err)
 	}
-	fmt.Println(data)
+	bodyString := string(bodyBytes)
+
+	fmt.Println(bodyString)
 }
 
 func main(){
-	getall()
+	//adddata()
+	fmt.Println(getall())
 }
